@@ -3,24 +3,22 @@ import {browser, element, By, $, protractor} from 'protractor'
 describe('Test', ()=> {
    const URL = 'https://movies-finder.firebaseapp.com/'
    let searchField = element(By.css('input.form-control'))
+   let movieTiles = element.all(By.css('movies>.jumbotron+div movie-card'))
+   let EC = protractor.ExpectedConditions
 
     it('"Go" button returns collection of elements ', ()=> {
-        let movieTiles = element.all(By.css('movies>.jumbotron+div movie-card'))
         browser.get(URL)
         searchField.sendKeys('Logan')
         element(By.css('span.input-group-btn button.btn.btn-primary')).click()
-        browser.wait(() => movieTiles.get(0).isDisplayed().then(result => result, () => false)
-        , 5000)
+        browser.wait(EC.visibilityOf(movieTiles.first()), 5000)
         let firstTile = movieTiles.get(0)
         expect(firstTile.getText()).toContain('Logan')
 
     }) 
-
     it('Checking that hitting Enter invokes search', ()=> {
         browser.get(URL)
         searchField.sendKeys('Logan', protractor.Key.ENTER)
-        browser.sleep(3000)
-        let movieTiles = element.all(By.css('movies>.jumbotron+div movie-card'))
+        browser.wait(EC.visibilityOf(movieTiles.first()), 5000)
         let firstTile = movieTiles.get(0)
         expect(firstTile.getText()).toContain('Logan')
 
@@ -30,13 +28,14 @@ describe('Test', ()=> {
         browser.get(URL)
         searchField.sendKeys('Logan')
         element(By.css('span.input-group-btn button.btn.btn-primary')).click()
-        browser.sleep(3000)
-        element(By.css('div h4.text-ellipsis a[ng-reflect-router-link="/movie/263115"]')).click()
+        browser.wait(EC.visibilityOf(movieTiles.first()), 5000)
+        element.all(By.css('movies>.jumbotron+div movie-card h4 a')).first().click()
         browser.sleep(3000)
         expect(element(By.css('iframe.embed-responsive-item')).isDisplayed()).toBeTruthy()
 
     })
 
+   
     it('Popular Series button redirects to Popular Series page', ()=> {
         browser.get(URL)
         element(By.linkText('Popular Series')).click()
@@ -63,8 +62,28 @@ describe('Test', ()=> {
 
     })
 
-    
-      
-})
+    it('Check that name of movie category is displayed in URL', ()=> {
+        browser.get(URL)
+        element(By.linkText('Action')).click()
+        browser.wait(EC.urlContains('Action'),5000)
+        expect(EC.urlContains('action')).toBeTruthy()
 
+        })
+
+    it('Check that Visit Movies Website button redirects to movies website', ()=> {
+        browser.get(URL)
+        searchField.sendKeys('Wonder Woman')
+        element(By.css('span.input-group-btn button.btn.btn-primary')).click()
+        browser.wait(EC.visibilityOf(movieTiles.first()), 5000)
+        element.all(By.css('movies>.jumbotron+div movie-card h4 a')).first().click()
+        browser.sleep(2000)
+        element(By.linkText('Visit Movies Website')).click()
+        browser.sleep(2000)
+        expect(EC.urlIs('https://www.warnerbros.com/wonder-woman')).toBeTruthy()
+
+    })
+    
+    
+
+})
 
