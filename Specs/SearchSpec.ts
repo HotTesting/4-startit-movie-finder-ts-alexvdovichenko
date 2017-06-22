@@ -21,7 +21,7 @@ describe('Search Page:', ()=> {
     it('Search returns collection of movie tiles that match the search query', ()=> {
         searchPage.search('Logan')
         expect(searchPage.movieTiles.count()).toBeGreaterThan(0, 'Search results should not be empty')
-        let firstTile = searchPage.movieTiles.get(0)
+        let firstTile = searchPage.movieTiles.first()
         expect(firstTile.getText()).toContain('Logan', 'First movie tile should have text from the search query')
 
     }) 
@@ -39,23 +39,40 @@ describe('Search Page:', ()=> {
 
     })  
    
-    it('Popular Series button redirects to Popular Series page', ()=> {
+    it('Movie tile has name, release date and rating displayed', ()=> {
+        
+    })
+
+    it('Popular Series page has 20 tiles displayed', ()=> {
         searchPage.goToPopularSeries()
-        expect(searchPage.popularSeriesTiles.isDisplayed()).toBeTruthy('Movie tiles with popular series should be displayed')
+        expect(searchPage.getTilesCount()).toEqual(20, '20 Movie tiles with popular series should be displayed')
+
+        //use each or mqap  check data in collection  
+// let answer;
+//         searchPage.getTilesCount()  - Promise
+//         searchPage.getTilesCount().then (function(promisevalue) {
+//             answer = promisevalue;
+//         })
 
     })
 
-    it('Upcoming Movies button redirects to the page with Search field', ()=> {
+    it('', ()=> {
         searchPage.goToUpcomingMovies()
-        expect(searchPage.upcomingMoviesTiles.isDisplayed()).toBeTruthy('Movie tiles with upcoming movies should be displayed')
-
+        let allPromises = searchPage.upcomingMoviesTiles.map(moviecard=>{
+            return moviecard.$('h4 a').isDisplayed();
+        });
+        expect(allPromises.then(arr=>{return arr.length})).not.toBe(0)
+        expect(allPromises).not.toContain(false)
+       // expect(searchPage.upcomingMoviesTiles.isDisplayed()).toBeTruthy('Movie tiles with upcoming movies should be displayed')
+       ///searchPage.popularSeriesTiles.isDisplayed().then((arr)=> {console.log('###', arr)})
     })
 
     it('Movie Categories are displayed', ()=> {
         let expectedMoviesCategory = searchPage.getExpectedMovieCategories()
         let actualMoviesCategory =  searchPage.getMoviesCategoryTitles()
         actualMoviesCategory.each((element, index) => 
-            element.getText().then(text => expect(text).toEqual(expectedMoviesCategory[index])))
+            expect(actualMoviesCategory.getText()).toEqual(expectedMoviesCategory[index]))
+            //element.getText().then(text => expect(text).toEqual(expectedMoviesCategory[index])))
 
      })
 

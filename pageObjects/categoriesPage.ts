@@ -6,12 +6,17 @@ export class CategoriesPage extends BasePage {
     public randomCategory = Math.floor((Math.random() * this.expectedMoviesCategory.length))
     public randomCategoryName = this.expectedMoviesCategory[this.randomCategory]
 
-    genreTilesAreDisplayed() {
-        return this.genresTiles.isDisplayed()
+/// method returns promise of movie tiles of specific genre
+    genreTilesCollection() {
+        return this.genresTiles
     }
-
+///method for selection and navigation to a random movie category page
      goToMovieCategory() {
         element(By.linkText(this.randomCategoryName)).click()
         browser.wait(this.EC.visibilityOf(this.genresTiles.first()), 3000)
+    }
+
+    getCurrectUrl() {
+        return browser.getCurrentUrl()
     }
 }
